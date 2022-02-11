@@ -48,6 +48,7 @@
     src: kafka.configuration.j2
     dest: "{{ kafka_install_dir }}/kafka_{{ kafka_version }}/config/server.properties"
     force: yes
+  notify: restart kafka
   tags:
     - kafka
 
@@ -64,11 +65,7 @@
 
 - name: reload systemd daemon
   shell: "systemctl daemon-reload"
+  notify: restart kafka
   tags:
     - kafka
 
-- name: start kafka service
-  systemd:
-    name: kafka
-    state: started
-    enabled: True

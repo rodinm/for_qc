@@ -5,6 +5,7 @@
   group: name=zookeeper state=present
   tags:
     - zk
+    - zk_install
 
 - name: create zk user
   user:
@@ -12,6 +13,7 @@
     group: zookeeper
   tags:
     - zk
+    - zk_install
 
 - name: download zk
   get_url:
@@ -19,7 +21,8 @@
     dest: "{{ zk_download_path }}"
   tags:
     - zk
-    -
+    - zk_install
+
 - name: create zk dir
   file:
     path: "{{ item }}"
@@ -32,6 +35,7 @@
     - "{{ zk_data_path }}"
   tags:
     - zk
+    - zk_config
 
 - name: unarchive zk package
   unarchive:
@@ -42,22 +46,27 @@
     group: "zookeeper"
   tags:
     - zk
+    - zk_install
 
 - name: set zk configuration
   template:
     src: zookeeper.configuration.j2
     dest: "{{ zk_install_full_path }}/conf/zoo.cfg"
     force: yes
+  notify: restart zookeeper
   tags:
     - zk
+    - zk_install
 
 - name: set zk myid configuration
   template:
     src: zookeeper.myid.j2
     dest: "{{ zk_data_path }}/myid"
     force: yes
+  notify: restart zookeeper
   tags:
     - zk
+    - zk_config
 
 - name: set zk unit file
   template:
@@ -69,16 +78,12 @@
     force: yes
   tags:
     - zk
-    - zk_startup
+    - zk_install
 
 - name: reload systemd
   shell: "systemctl daemon-reload"
+  notify: restart zookeeper
   tags:
     - zookeeper
     - zk_startup
 
-- name: start zk service
-  systemd:
-    name: zookeeper
-    state: started
-    enabled: True

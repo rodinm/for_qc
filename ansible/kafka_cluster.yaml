@@ -1,6 +1,6 @@
 ---
 - name: Install zk cluster
-  hosts: zookeeper
+  hosts: kafka_cluster
   become: true
 
   roles:
