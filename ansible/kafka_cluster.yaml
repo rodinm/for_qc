@@ -1,5 +1,4 @@
 ---
-#special for quadcode :)
 - name: Install kafka cluster
   hosts: kafka_cluster
   become: true
