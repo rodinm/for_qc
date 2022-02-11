@@ -5,6 +5,7 @@
   group: name=kafka state=present
   tags:
     - kafka
+    - kafka_install
 
 - name: create kafka user
   user:
@@ -12,6 +13,7 @@
     group: "kafka"
   tags:
     - kafka
+    - kafka_install
 
 - name: create kafka dirs
   file:
@@ -26,6 +28,7 @@
     - "{{ kafka_install_dir }}"
   tags:
     - kafka
+    - kafka_install
 
 - name: download kafka package
   get_url:
@@ -33,6 +36,7 @@
     dest: "{{ kafka_download_path }}"
   tags:
     - kafka
+    - kafka_install
 
 
 - name: unarchive kafka
@@ -42,6 +46,7 @@
     copy: no
   tags:
     - kafka
+    - kafka_install
 
 - name: set kafka configuration
   template:
@@ -51,6 +56,7 @@
   notify: restart kafka
   tags:
     - kafka
+    - kafka_install
 
 - name: set kafka systemd unit
   template:
@@ -62,10 +68,12 @@
     force: yes
   tags:
     - kafka
+    - kafka_install
 
 - name: reload systemd daemon
   shell: "systemctl daemon-reload"
   notify: restart kafka
   tags:
     - kafka
+    - kafka_install
 
