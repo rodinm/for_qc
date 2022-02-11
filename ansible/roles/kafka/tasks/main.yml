@@ -1,0 +1,74 @@
+---
+# tasks file for kafka
+
+- name: create kafka group
+  group: name=kafka state=present
+  tags:
+    - kafka
+
+- name: create kafka user
+  user:
+    name: "kafka"
+    group: "kafka"
+  tags:
+    - kafka
+
+- name: create kafka dirs
+  file:
+    path: "{{ item }}"
+    state: "directory"
+    owner: kafka
+    group: kafka
+  loop:
+    - "{{ kafka_data_dir }}"
+    - "{{ kafka_log_dir }}"
+    - "{{ kafka_log_topics_dir }}"
+    - "{{ kafka_install_dir }}"
+  tags:
+    - kafka
+
+- name: download kafka package
+  get_url:
+    url: "{{ kafka_url }}"
+    dest: "{{ kafka_download_path }}"
+  tags:
+    - kafka
+
+
+- name: unarchive kafka
+  unarchive:
+    src: "{{ kafka_download_path }}/{{ kafka_package }}"
+    dest: "{{ kafka_install_dir }}"
+    copy: no
+  tags:
+    - kafka
+
+- name: set kafka configuration
+  template:
+    src: kafka.configuration.j2
+    dest: "{{ kafka_install_dir }}/kafka_{{ kafka_version }}/config/server.properties"
+    force: yes
+  tags:
+    - kafka
+
+- name: set kafka systemd unit
+  template:
+    src: kafka.systemd.j2
+    dest: /etc/systemd/system/kafka.service
+    owner: root
+    group: root
+    mode: 644
+    force: yes
+  tags:
+    - kafka
+
+- name: reload systemd daemon
+  shell: "systemctl daemon-reload"
+  tags:
+    - kafka
+
+- name: start kafka service
+  systemd:
+    name: kafka
+    state: started
+    enabled: True

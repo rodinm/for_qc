@@ -1,0 +1,5 @@
+---
+# defaults file for kafka
+
+kafka_url: "https://dlcdn.apache.org/kafka/{{ kafka_base_version }}/{{kafka_package}}"
+kafka_package: "kafka_{{ kafka_version }}.tgz"

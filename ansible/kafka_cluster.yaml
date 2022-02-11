@@ -1,0 +1,11 @@
+---
+- name: Install zk cluster
+  hosts: zookeeper
+  become: true
+
+  roles:
+    - java
+    - zookeeper
+    - kafka
+
+

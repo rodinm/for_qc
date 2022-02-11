@@ -1,0 +1,84 @@
+---
+# tasks file for zookeeper
+
+- name: create zk group
+  group: name=zookeeper state=present
+  tags:
+    - zk
+
+- name: create zk user
+  user:
+    name: zookeeper
+    group: zookeeper
+  tags:
+    - zk
+
+- name: download zk
+  get_url:
+    url: "{{ zk_url }}"
+    dest: "{{ zk_download_path }}"
+  tags:
+    - zk
+    -
+- name: create zk dir
+  file:
+    path: "{{ item }}"
+    state: "directory"
+    owner: zookeeper
+    group: zookeeper
+  loop:
+    - "{{ zk_install_base_path }}"
+    - "{{ zk_log_path }}"
+    - "{{ zk_data_path }}"
+  tags:
+    - zk
+
+- name: unarchive zk package
+  unarchive:
+    src: "{{ zk_download_path }}{{ zk_package }}"
+    dest: "{{ zk_install_base_path }}"
+    copy: "no"
+    owner: "zookeeper"
+    group: "zookeeper"
+  tags:
+    - zk
+
+- name: set zk configuration
+  template:
+    src: zookeeper.configuration.j2
+    dest: "{{ zk_install_full_path }}/conf/zoo.cfg"
+    force: yes
+  tags:
+    - zk
+
+- name: set zk myid configuration
+  template:
+    src: zookeeper.myid.j2
+    dest: "{{ zk_data_path }}/myid"
+    force: yes
+  tags:
+    - zk
+
+- name: set zk unit file
+  template:
+    src: "zookeeper.systemd.j2"
+    dest: "/etc/systemd/system/zookeeper.service"
+    owner: root
+    group: root
+    mode: 644
+    force: yes
+  tags:
+    - zk
+    - zk_startup
+
+- name: reload systemd
+  shell: "systemctl daemon-reload"
+  tags:
+    - zookeeper
+    - zk_startup
+
+- name: start zk service
+  systemd:
+    name: zookeeper
+    state: started
+    enabled: True

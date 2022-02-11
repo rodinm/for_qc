@@ -1,0 +1,13 @@
+---
+# vars file for zookeeper
+zk_version: "3.7.0"
+zk_install_base_path: "/opt/zookeeper"
+zk_install_full_path: "/opt/zookeeper/apache-zookeeper-{{ zk_version }}-bin"
+zk_download_path: "/tmp/"
+zk_data_path: "/data/zk/"
+zk_log_path: "/var/log/zk/"
+zk_conf_path: "/etc/zk/"
+zk_port: 2181
+zk_tick_time: 2000
+zk_init_limit: 5
+zk_sync_limit: 2

@@ -1,0 +1,20 @@
+all:
+  children:
+    kafka_cluster:
+      children:
+       zookeeper:
+         hosts:
+           192.168.3.29:
+             zk_id: 1
+           192.168.3.30:
+             zk_id: 2
+           192.168.3.31:
+             zk_id: 3
+       kafka:
+          hosts:
+            192.168.3.29:
+              kafka_broker_id: 1
+            192.168.3.30:
+              kafka_broker_id: 2
+            192.168.3.31:
+              kafka_broker_id: 3
