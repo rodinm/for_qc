@@ -1,5 +1,5 @@
 ---
-- name: Install zk cluster
+- name: Install kafka cluster
   hosts: kafka_cluster
   become: true
 
